@@ -78,6 +78,6 @@ setup(
     license='LGPLv2+',
     author='Shoulin Wei',
     author_email='weishoulin@astrolab.cn',
-    description='Distributed Computing API',
+    description='Python Distributed Computing API',
     install_requires=install_requires,
     dependency_links=dependency_links)
