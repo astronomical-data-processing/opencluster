@@ -1,4 +1,5 @@
 import binascii
+import traceback
 
 import threading
 import logging
@@ -7,7 +8,7 @@ import Pyro4
 from opencluster.errors import ClosetoOverError
 from opencluster.hbdaemon import HbDaemon
 from opencluster.item import FactoryObjValue, ObjValue
-import opencluster.meta
+import opencluster.meta as meta
 from opencluster.factoryleader import FactoryLeader
 
 logger = logging.getLogger(__name__)
@@ -46,7 +47,7 @@ class FactoryService(object):
 
 
     def getObjectVersion(self, crcstr):
-        return binascii.crc32(crcstr)
+        return crcstr
 
     def getSessionId(self):
         return self.checkSessionId(None)
@@ -59,6 +60,7 @@ class FactoryService(object):
             if self.condition.acquire() :
                 try :
                     domainNodeKey = FactoryObjValue.getDomainNodekey(domain, node)
+
                     if not self.factoryInfo.has_key(domainNodeKey) :
                         if not self.factoryInfo.has_key(domain) :
                             self.factoryInfo.setObj(domain, 0.0)
@@ -69,7 +71,6 @@ class FactoryService(object):
                             self.factoryInfo.setObj(meta.getMetaUpdateTime(domain), time.time())
 
                         self.factoryInfo.setObj(meta.getMetaVersion(domain), self.updateDomainVersion())
-
                         self.factoryInfo.setObj(domainNodeKey, obj)
                         self.factoryInfo.setObj(meta.getMetaVersion(domainNodeKey), self.getObjectVersion(str(obj)))
                         self.factoryInfo.setObj(meta.getMetaCreater(domainNodeKey), node)
@@ -80,9 +81,8 @@ class FactoryService(object):
                         if timeout is not None:
                             self.factoryInfo.setObj(meta.getMetaTimeout(domainNodeKey), timeout)
 
-                        nodeNum = self.factoryInfo.getObj(domain)
-                        self.factoryInfo.setObj(domain, nodeNum+1);
-
+                        nodeNum = int(self.factoryInfo.getObj(domain))
+                        self.factoryInfo.setObj(domain, nodeNum+1)
                         if isHeartBeat :
                             self.factoryInfo.setObj(meta.getMeta(domainNodeKey), meta.HEARTBEAT)
                         self.factoryLeader.runCopyTask(domainNodeKey, self)
@@ -94,7 +94,8 @@ class FactoryService(object):
                         self.update(domain,node,obj,sessionId)
 
                 except Exception as e:
-                    logger.error("factoryservice.create:"+e)
+                    traceback.print_stack()
+                    logger.error("factoryservice.create:" + e)
                 finally :
                     #unlock
                     self.condition.release()

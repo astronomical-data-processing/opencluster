@@ -7,6 +7,7 @@ import traceback
 from opencluster.hbdaemon import HbDaemon
 from opencluster.errors import LeaderError
 from opencluster.configuration import Conf
+from opencluster.rpc import RPCContext
 
 logger = logging.getLogger(__name__)
 

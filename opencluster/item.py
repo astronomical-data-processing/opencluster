@@ -5,7 +5,7 @@ import time
 import importlib
 import imp
 
-import opencluster.meta
+import opencluster.meta as meta
 
 TaskStateName = {
     6: "TASK_STAGING",  # Initial state. Framework status updates should not use.
@@ -58,6 +58,11 @@ class ObjectBeanList(list) :
 class ObjValue(dict):
     def __init__(self):
         super(ObjValue,self).__init__()
+
+    def has_key(self,key):
+        if key in self.keys():
+            return True
+        return False
 
     def getWidely(self, regex):
         p = re.compile(regex)
@@ -253,7 +258,7 @@ class FactoryObjValue(ObjValue):
         else:
             return False
     @classmethod
-    def getDomainNodekey(self, domain, node):
+    def getDomainNodekey(cls, domain, node):
         if node is None:
             return domain
         else :
@@ -343,16 +348,16 @@ class FactoryObjValue(ObjValue):
                 keyArr = self.getDomainNode(domainNodeKey)
 
                 timeout = self.getObj(meta.getMetaTimeout(domainNodeKey))
-                createtime = long(self.get(key))
+                createtime = int(self.get(key))
                 if timeout is not None :
-                    if time.time()- createtime > long(self.getObj(meta.getMetaTimeout(domainNodeKey))) :
+                    if time.time()- createtime > int(self.getObj(meta.getMetaTimeout(domainNodeKey))) :
                         keys.append(keyArr)
                     continue
 
                 if keyArr and len(keyArr)==2 :
                     propValue = self.getObj(meta.getMeta(domainNodeKey))
                     if propValue is None or propValue != meta.HEARTBEAT :
-                        if time.time()-long(self.get(key)) > exp :
+                        if time.time()-int(self.get(key)) > exp :
                             keys.append(keyArr)
         return keys
 
@@ -360,6 +365,7 @@ if __name__ == "__main__" :
     obj = FactoryObjValue()
     obj["_worker_workerUVFITS"] = "1"
     obj["_worker_workerdemo"] = "0"
+
     for (k,v) in obj.items() :
         print(k,v)
     p = re.compile("_worker_*")

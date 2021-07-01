@@ -43,12 +43,13 @@ class FactoryLocal(object):
             return None
         if FactoryObjValue.checkGrammer(domain) and FactoryObjValue.checkGrammer(node) :
             try:
-                ov = self.factory.create(domain,node,obj,self.sid,isHearBeat,timeout)
+                ov = self.factory.create(domain, node, obj, self.sid, isHearBeat, timeout)
                 ob = self.ovToBean(ov,domain,node)
                 if ob and isHearBeat :
                     HbDaemon.runPutTask(self.factory,self.factoryLeader,domain,node,obj,self.sid)
             except Exception as e :
-                logger.error("factorylocal.__put:"+str(e))
+                # traceback.print_stack()
+                logger.error("factorylocal.__put:" + str(e))
 
                 if isinstance(e,CommunicationError):
                     self.factory = self.factoryLeader.getNextLeader()
@@ -90,7 +91,7 @@ class FactoryLocal(object):
 
         if FactoryObjValue.checkGrammer(domain) :
             try:
-                ov = self.factory.get(domain,None,self.sid)
+                ov = self.factory.get(domain, None, self.sid)
                 objList = self.ovToBeanList(ov,domain)
 
             except Exception as e :
@@ -231,7 +232,7 @@ class FactoryLocal(object):
 
             for key in nodeVersion.keys() :
                 obp = ObjectBean()
-                obp.vid = long(nodeVersion.getObj(key))
+                obp.vid = nodeVersion.getObj(key)
                 obp.name = key[0:key.find(meta.METAVERSION)]
                 obp.obj = ov.getObj(obp.name)
 
@@ -250,7 +251,7 @@ class FactoryLocal(object):
                     keyArr = FactoryObjValue.getDomainNode(domainNodeKey)
                     if keyArr and len(keyArr) == keyLen :
                         obp = ObjectBean()
-                        obp.vid = long(ov.getObj(meta.getMetaVersion(domainNodeKey)))
+                        obp.vid = ov.getObj(meta.getMetaVersion(domainNodeKey))
                         obp.name = domainNodeKey
                         obp.obj = ov.getObj(domainNodeKey)
                         obp.createTime = ov.getObj(meta.getMetaCreateTime(domainNodeKey))

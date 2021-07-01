@@ -2,7 +2,7 @@ import sys,os
 import psutil
 import time
 from collections import OrderedDict
-from configuration import Conf
+from opencluster.configuration import Conf
 
 class Node(object) :
     '''
@@ -11,26 +11,26 @@ class Node(object) :
         CPUs : int
         CPU Frequency: MHZ
     '''
-    mSize = 1024*1024l
-    gSize = 1024*1024*1024l
+    mSize = 1024*1024
+    gSize = 1024*1024*1024
     def __init__(self,host,port,name):
         self.host = host
         self.port = port
         self.name = name
 
-        self.lastTime = 0l
+        self.lastTime = 0
         self.startTime = psutil.boot_time()
 
-        self.totalDisk = 0l
-        self.freeDisk = 0l
-        self.usedDisk = 0l
-        self.percentDisk = 0l
+        self.totalDisk = 0.0
+        self.freeDisk = 0.0
+        self.usedDisk = 0.0
+        self.percentDisk = 0.0
 
 
-        self.totalMemory = 0l
-        self.usedMemory = 0l
-        self.availableMemory = 0l
-        self.percentMemory = 0l
+        self.totalMemory = 0.0
+        self.usedMemory = 0.0
+        self.availableMemory = 0.0
+        self.percentMemory = 0.0
 
         self.cpuCount = 0
         self.cpuTotalPercent = 0

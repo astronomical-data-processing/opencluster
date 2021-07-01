@@ -9,7 +9,7 @@ parser = optparse.OptionParser(usage="Usage: python %prog [options]")
 
 def add_default_options():
     parser.disable_interspersed_args()
-    parser.add_option("-e", "--config", type="string", default="/temp/opencluster/config.ini", help="path for configuration file")
+    parser.add_option("-e", "--config", type="string", default="/opt/temp/opencluster/config.ini", help="path for configuration file")
     parser.add_option("-q", "--quiet", action="store_true",help="be quiet")
     parser.add_option("-v", "--verbose", action="store_true", help="show more useful log")
 

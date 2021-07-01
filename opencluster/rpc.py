@@ -4,17 +4,18 @@ import Pyro4
 from opencluster.configuration import Conf
 
 logger = logging.getLogger(__name__)
+Pyro4.config.SERIALIZER = "pickle"
+Pyro4.config.SERIALIZERS_ACCEPTED = set(['pickle'])
+Pyro4.config.COMPRESSION = True
+Pyro4.config.POLLTIMEOUT = 5
+Pyro4.config.SERVERTYPE = "multiplex"    #  multiplex or thread
+Pyro4.config.SOCK_REUSE = True
+Pyro4.config.REQUIRE_EXPOSE = False
+Pyro4.config.COMMTIMEOUT = 60
 
 class RPCContext(object):
     def __init__(self):
-        Pyro4.config.SERIALIZER = "pickle"
-        Pyro4.config.SERIALIZERS_ACCEPTED = set(['pickle'])
-        Pyro4.config.COMPRESSION = True
-        Pyro4.config.POLLTIMEOUT = 5
-        Pyro4.config.SERVERTYPE = "multiplex"    #  multiplex or thread
-        Pyro4.config.SOCK_REUSE = True
-        Pyro4.config.REQUIRE_EXPOSE = False
-        Pyro4.config.COMMTIMEOUT = 60
+        pass
 
     def start(self, host, port, service_name, service_instance, loop_condition=True):
         self._pyrodaemon = Pyro4.Daemon(host=host, port=port)
@@ -22,9 +23,11 @@ class RPCContext(object):
         self._pyroserverthread = threading.Thread(
             target=self._pyrodaemon.requestLoop,
             name="%s Server" % (service_name,))
+        self._pyroserverthread.setDaemon(True)
         self._pyroserverthread.start()
     
     def stop(self):
+        logger.info("prepare to shutdown daemon...")
         self._pyrodaemon.shutdown()
         self._pyroserverthread.join(5)
 

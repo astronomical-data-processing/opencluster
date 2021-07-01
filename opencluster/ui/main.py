@@ -36,7 +36,8 @@ app = web.application(tuple(urls),globals())
 folder_templates_full_path = PWD + Conf.getWebTemplatesPath()
 
 def render(params={},partial=True):
-    global_vars = dict({'title':'OpenCluster'}.items() + params.items())
+    global_vars = params
+    global_vars['title'] = "OpenCluster"
     if not partial:
         return web.template.render(folder_templates_full_path, globals=global_vars)
     else:
@@ -68,7 +69,7 @@ class WebServer(object) :
         # web.config.static_path = PWD + Conf.getWebStaticPath()
 
     def start(self) :
-        app.run(self.server)
+        app.run()
 
     def setup_session_folder_full_path(self):
         # global session
@@ -85,7 +86,7 @@ def server_static(filename, mime_type=None):
     ''''' Serves a file statically '''
     if mime_type is None:
         mime_type = mimetypes.guess_type(filename)[0]
-    web.header('Content-Type', bytes('%s' % mime_type))
+    # web.header('Content-Type', bytes('%s' % mime_type, 'utf-8'))
     filename = os.path.join(Conf.getWebStaticFullPath(), filename)
     if not os.path.exists(filename):
         raise web.NotFound()
@@ -277,6 +278,6 @@ def getNodeService(node) :
     return FactoryContext.getNodeDaemon(node)
 
 if __name__ == "__main__" :
-    Conf.setConfigFile("/temp/opencluster/config.ini")
+    Conf.setConfigFile("/opt/temp/opencluster/config.ini")
     thisServer = WebServer(Conf.getWebServers())
     thisServer.start()

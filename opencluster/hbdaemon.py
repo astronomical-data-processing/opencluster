@@ -89,8 +89,8 @@ class GetHbTask(threading.Thread) :
 
             if not self.finished.is_set():
                 for key in self.__hbinfo.keys() :
-                    curtime = long(time.time())
-                    lasttime = long(self.__hbinfo.getObj(key))
+                    curtime = int(time.time())
+                    lasttime = int(self.__hbinfo.getObj(key))
 
                     t = 0
                     if lasttime :

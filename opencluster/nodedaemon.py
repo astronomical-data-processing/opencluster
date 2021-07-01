@@ -188,7 +188,7 @@ class NodeDademon(object):
 
             expired = []
             t = time.time()
-            for address,service in self.node.services.iteritems():
+            for address,service in self.node.services.items():
                 if t > service.expiry:  # Worker expired
                     expired.append(address)
             for address in expired:

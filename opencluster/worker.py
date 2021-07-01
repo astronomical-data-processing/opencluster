@@ -20,7 +20,7 @@ parser = optparse.OptionParser(usage="Usage: python %prog [options]")
 
 def add_default_options():
     parser.disable_interspersed_args()
-    parser.add_option("-i", "--host", type="string", default="localhost")
+    parser.add_option("-i", "--host", type="string", default="127.0.0.1")
     parser.add_option("-p", "--port", type="int", default=0, help="port")
     parser.add_option("-r", "--retry", type="int", default=0, help="retry times when failed (default: 0)")
     parser.add_option("-c", "--cpus", type="float", default=1.0, help="cpus used")

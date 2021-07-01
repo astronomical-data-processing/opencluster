@@ -4,7 +4,8 @@ import logging
 import marshal
 import datetime
 import pickle
-import threading, Queue
+import threading
+import queue
 import time
 import random
 import multiprocessing
@@ -21,7 +22,7 @@ try :
     from mesos.native import MesosExecutorDriver, MesosSchedulerDriver
     from mesos.interface import mesos_pb2
 except :
-    print "warning no module named mesos.native or mesos.interface."
+    print("warning no module named mesos.native or mesos.interface.")
     pass
 
 MAX_FAILED = 3
@@ -45,7 +46,7 @@ def run_task(task, aid):
 
 class Scheduler(object):
     def __init__(self, manager):
-        self.completionEvents = Queue.Queue()
+        self.completionEvents = queue.Queue()
         self.shuttingdown = False
         self.stopped = False
         self.finished_count = 0
@@ -174,7 +175,7 @@ class StandaloneScheduler(Scheduler):
                             try :
                                 self.taskEnded(self.slaveTasks[tid], Success(), results.value)
                                 logger.debug("Task %s finished  - (%d/%d)", tid, self.finished_count, self.taskNum)
-                            except CommunicationError,ce:
+                            except CommunicationError as ce:
                                 #logger.error("CommunicationErrorCommunicationError")
                                 continue
                             except Exception as e :
@@ -460,7 +461,7 @@ class MesosScheduler(Scheduler):
         self.last_offer_time = time.time()
         for offer in offers:
             if self.shuttingdown:
-                print "Shutting down: declining offer on [%s]" % offer.hostname
+                logger.info("Shutting down: declining offer on [%s]" % offer.hostname)
                 driver.declineOffer(offer.id)
                 continue
 

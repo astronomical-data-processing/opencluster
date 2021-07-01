@@ -8,7 +8,7 @@ import time
 import pickle
 import MySQLdb
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opencluster")
 from opencluster.factory import FactoryContext
 from opencluster.factorypatternexector import FactoryPatternExector
 from opencluster.configuration import Conf, setLogger
@@ -52,15 +52,15 @@ def parse_options():
     if options.mem is None:
         options.mem = Conf.MEM_PER_TASK
 
-    options.logLevel = (options.quiet and logging.ERROR or options.verbose and logging.DEBUG or logging.INFO)
-    setLogger(__name__, options.name, options.logLevel)
-
     if options.config:
         if os.path.exists(options.config) and os.path.isfile(options.config):
             Conf.setConfigFile(options.config)
         else:
             logger.error("configuration file is not found. (%s)" %(options.config,))
             sys.exit(2)
+
+    options.logLevel = (options.quiet and logging.ERROR or options.verbose and logging.DEBUG or logging.INFO)
+    setLogger(options.name, options.name, options.logLevel)
 
     return options
 
@@ -186,12 +186,10 @@ class Manager(object):
             raise Exception("please consume results from warehouse [%s,%s]!"%(Conf.getWareHouseAddr(),self.options.warehouse))
 
     def getWaitingWorkers(self, workerType, asynchronous=False, worker=None):
-
-        logger.info("getWaitingWorkers:%s" % workerType)
-
         wslist = self.getWorkerList(workerType)
-        wklist = []
+        logger.info("available: %d workers with %s", len(wslist), workerType)
 
+        wklist = []
         for wsinfo in wslist:
             wklist.append(FactoryContext.getWorker(wsinfo[0], int(wsinfo[1]), wsinfo[2], asynchronous))
 

@@ -13,7 +13,7 @@ def add_default_options():
         "-e",
         "--config",
         type="string",
-        default="/temp/opencluster/config.ini",
+        default="/opt/temp/opencluster/config.ini",
         help="path for configuration file")
     parser.add_option("-q", "--quiet", action="store_true", help="be quiet")
     parser.add_option(
